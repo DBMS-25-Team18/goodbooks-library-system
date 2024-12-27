@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, flash, session
 from app.db import get_db_connection
 from dotenv import load_dotenv
 import os
+import bcrypt
 
 load_dotenv()
 ENV_SECRET = os.getenv('SECRET_KEY')
@@ -22,20 +23,20 @@ def create_app():
             
             connection = get_db_connection()
             cursor = connection.cursor(dictionary = True)
-            query = "SELECT * FROM users WHERE username = %s AND password = %s"
-            cursor.execute(query, (username, password))
+            query = "SELECT * FROM users WHERE username = %s"
+            cursor.execute(query, (username, ))
             user = cursor.fetchone()
 
             cursor.close()
             connection.close()
 
-            if user:
+            if user and bcrypt.checkpw(password.encode('utf-8'), user["password"].encode('utf-8')):
                 session["user_id"] = user["id"]
                 session["username"] = user["username"]
                 print(user)
                 return redirect("/welcome")
             else:
-                return "Invalid user. Please try again."
+                return "Wrong username or password. Please try again."
         
         return render_template("login.html")
 
@@ -50,8 +51,32 @@ def create_app():
             return redirect("/")
         return render_template("welcome.html")
     
-    @app.route("/register")
+    @app.route("/register", methods=["GET", "POST"])
     def register():
+        if request.method == "POST":
+            username = request.form['username']
+            password = request.form['password']
+            salt = bcrypt.gensalt()
+            password = bcrypt.hashpw(password.encode('utf-8'), salt)
+
+            connection = get_db_connection()
+            cursor = connection.cursor()
+
+            try:
+                query = "INSERT INTO users (username, password) VALUES (%s, %s)"
+                cursor.execute(query, (username, password))
+                connection.commit()
+
+                cursor.close()
+                connection.close()
+
+                return redirect("/login")
+            
+            except:
+                cursor.close()
+                connection.close()
+                return "Error registering. Username may already exist."
+            
         return render_template("register.html")
     
     return app
