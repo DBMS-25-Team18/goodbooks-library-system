@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <h1>Search</h1>
+    <form>
+        <input type="text" placeholder="Book Name">
+        <input type="text" placeholder="Author">
+        <input type="text" placeholder="Tag">
+        <input type="number" placeholder="Rates">
+        <button type="submit">Search</button>
+    </form>
+    <a href="/wishlist" class="return-btn">Return</a>
+</div>
+{% endblock %}

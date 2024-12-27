@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <h1>Name of the web</h1>
+    <div class="button-group">
+        <a href="/rating" class="btn">Rating</a>
+        <a href="/search" class="btn">Search</a>
+    </div>
+    <h2>Wish list</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Book Name</th>
+                <th>Author</th>
+                <th>Rating</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Harry Potter</td>
+                <td>JK Rowling</td>
+                <td>Fiction</td>
+                <td><button class="delete-btn">Delete</button></td>
+            </tr>
+            <tr>
+                <td>XXX</td>
+                <td>XXX</td>
+                <td>XXX</td>
+                <td><button class="delete-btn">Delete</button></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+{% endblock %}

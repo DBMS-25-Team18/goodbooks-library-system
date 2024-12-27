@@ -12,7 +12,7 @@ def create_app():
     app.secret_key = ENV_SECRET
 
     @app.route("/")
-    def home():
+    def base():
         return render_template("base.html")
     
     @app.route("/login", methods=["GET", "POST"])
@@ -79,4 +79,26 @@ def create_app():
             
         return render_template("register.html")
     
+    @app.route("/wishlist")
+    def wishlist():
+        if 'username' not in session:
+            return redirect("/")
+        return render_template("wishlist.html")
+    
+    @app.route("/search")
+    def search():
+        if 'username' not in session:
+            return redirect("/")
+        return render_template("search.html")
+    
+    @app.route("/rating")
+    def rating():
+        if 'username' not in session:
+            return redirect("/")
+        return render_template("rating.html")
+    
+    @app.errorhandler(404)
+    def not_found(e):
+        return redirect("/")
+
     return app
