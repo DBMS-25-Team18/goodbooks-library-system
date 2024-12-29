@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, flash, session
 from app.db import get_db_connection
+from app.query import search_params, search_query
 from dotenv import load_dotenv
 import os
 import bcrypt
@@ -49,6 +50,7 @@ def create_app():
     def welcome():
         if 'username' not in session:
             return redirect("/")
+        
         return render_template("welcome.html")
     
     @app.route("/register", methods=["GET", "POST"])
@@ -83,18 +85,50 @@ def create_app():
     def wishlist():
         if 'username' not in session:
             return redirect("/")
+        
         return render_template("wishlist.html")
     
-    @app.route("/search")
+    @app.route("/search", methods=["GET", "POST"])
     def search():
         if 'username' not in session:
             return redirect("/")
+        
+        if request.method == "POST" and (request.form['title'] or request.form['authors'] or 
+                                         request.form['tag'] or request.form['isbn']):
+            session["title"] = request.form['title']
+            session["authors"] = request.form['authors']
+            session["tag"] = request.form['tag']
+            session["isbn"] = request.form['isbn']
+
+            return redirect("/result/1")
+
         return render_template("search.html")
+    
+    @app.route("/result/<int:page>")
+    def result(page):
+        if 'username' not in session:
+            return redirect("/")
+        
+        query = search_query(session["title"], session["authors"], session["tag"], session["isbn"], page)
+        params = search_params(session["title"], session["authors"], session["tag"], session["isbn"])
+
+        connection = get_db_connection()
+        cursor = connection.cursor(dictionary = True)
+
+        print(query)
+        cursor.execute(query, tuple(params))
+        books = cursor.fetchall()
+
+        cursor.close()
+        connection.close()
+        
+        return render_template("result.html", tag = session["tag"], books = books, page = page)
     
     @app.route("/rating")
     def rating():
         if 'username' not in session:
             return redirect("/")
+        
         return render_template("rating.html")
     
     @app.errorhandler(404)

@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    {% if books %}
+    <table>
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Authors</th>
+                {% if tag %}
+                <th>Tag</th>
+                {% else %}
+                <th>Rating</th>
+                {% endif %}
+                <th>Wishlist</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for book in books %}
+            <tr>
+                <td>{{ book.title }}</td>
+                <td>{{ book.authors }}</td>
+                {% if tag %}
+                <td>{{ book.tag_name }}: {{ book.count }} times</td>
+                {% else %}
+                <td>{{ book.average_rating }}</td>
+                {% endif %}
+                <td>
+                    <form method="POST" action="/">
+                        <button type="submit" class="btn">Add to Wishlist</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No books are found. Try again!</p>
+    {% endif %}
+</div>
+{% endblock %}
