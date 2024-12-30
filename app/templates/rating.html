@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <h1>Rating</h1>
+    <form method="POST" action="/subrate/{{ book.id }}">
+        <input type="text" placeholder="Book Name" value="{{ book.title }}" readonly>
+        <input type="text" placeholder="Authors" value="{{ book.authors }}" readonly>
+        <input type="number" name="rating" placeholder="Your Rate">
+        <button type="submit">Submit</button>
+    </form>
+    <a href="/wishlist" class="return-btn">Return</a>
+</div>
+{% endblock %}

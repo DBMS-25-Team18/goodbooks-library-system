@@ -8,8 +8,9 @@
     <nav>
         <a href="/">Home</a>
         {% if session.user_id %}
-            <a href="/">Search</a>
-            <a href="/">My Wishlist</a>
+            <a href="/search">Search</a>
+            <a href="/wishlist">My Wishlist</a>
+            <a href="/rated">Rated Books</a>
             <a href="/logout">Logout</a>
         {% else %}
             <a href="/login">Login</a>
