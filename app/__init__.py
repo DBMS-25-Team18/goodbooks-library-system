@@ -6,7 +6,7 @@ import os
 import bcrypt
 
 load_dotenv()
-ENV_SECRET = os.getenv('SECRET_KEY')
+ENV_SECRET = os.getenv("SECRET_KEY")
 
 def create_app():
     app = Flask(__name__)
@@ -14,7 +14,7 @@ def create_app():
 
     @app.route("/")
     def base():
-        return render_template("base.html")
+        return render_template("home.html")
     
     @app.route("/login", methods=["GET", "POST"])
     def login():
@@ -31,7 +31,7 @@ def create_app():
             cursor.close()
             connection.close()
 
-            if user and bcrypt.checkpw(password.encode('utf-8'), user["password"].encode('utf-8')):
+            if user and bcrypt.checkpw(password.encode("utf-8"), user["password"].encode("utf-8")):
                 session["user_id"] = user["id"]
                 session["username"] = user["username"]
                 print(user)
@@ -48,7 +48,7 @@ def create_app():
     
     @app.route("/welcome")
     def welcome():
-        if 'username' not in session:
+        if "username" not in session:
             return redirect("/")
         
         return render_template("welcome.html")
@@ -56,10 +56,10 @@ def create_app():
     @app.route("/register", methods=["GET", "POST"])
     def register():
         if request.method == "POST":
-            username = request.form['username']
-            password = request.form['password']
+            username = request.form["username"]
+            password = request.form["password"]
             salt = bcrypt.gensalt()
-            password = bcrypt.hashpw(password.encode('utf-8'), salt)
+            password = bcrypt.hashpw(password.encode("utf-8"), salt)
 
             connection = get_db_connection()
             cursor = connection.cursor()
@@ -83,22 +83,40 @@ def create_app():
     
     @app.route("/wishlist")
     def wishlist():
-        if 'username' not in session:
+        if "username" not in session:
             return redirect("/")
         
-        return render_template("wishlist.html")
+        query = "SELECT * FROM users AS u, books AS b, user_wish AS w WHERE u.id = %s AND u.id = w.user_id AND w.books_id = b.id"
+
+        connection = get_db_connection()
+        cursor = connection.cursor(dictionary = True)
+
+        cursor.execute(query, (session["user_id"], ))
+        books = cursor.fetchall()
+
+        cursor.close()
+        connection.close()
+        
+        return render_template("wishlist.html", books = books)
+    
+    @app.route("/addwish/<int:id>", methods=["POST"])
+    def addwish(id):
+        if "username" not in session:
+            return redirect("/")
+        
+        return redirect("/wishlist")
     
     @app.route("/search", methods=["GET", "POST"])
     def search():
-        if 'username' not in session:
+        if "username" not in session:
             return redirect("/")
         
-        if request.method == "POST" and (request.form['title'] or request.form['authors'] or 
-                                         request.form['tag'] or request.form['isbn']):
-            session["title"] = request.form['title']
-            session["authors"] = request.form['authors']
-            session["tag"] = request.form['tag']
-            session["isbn"] = request.form['isbn']
+        if request.method == "POST" and (request.form["title"] or request.form["authors"] or 
+                                         request.form["tag"] or request.form["isbn"]):
+            session["title"] = request.form["title"]
+            session["authors"] = request.form["authors"]
+            session["tag"] = request.form["tag"]
+            session["isbn"] = request.form["isbn"]
 
             return redirect("/result/1")
 
@@ -106,27 +124,29 @@ def create_app():
     
     @app.route("/result/<int:page>")
     def result(page):
-        if 'username' not in session:
+        if "username" not in session:
             return redirect("/")
         
+        if page <= 0:
+            return redirect("/result/1")
+
         query = search_query(session["title"], session["authors"], session["tag"], session["isbn"], page)
         params = search_params(session["title"], session["authors"], session["tag"], session["isbn"])
 
         connection = get_db_connection()
         cursor = connection.cursor(dictionary = True)
 
-        print(query)
         cursor.execute(query, tuple(params))
         books = cursor.fetchall()
 
         cursor.close()
         connection.close()
         
-        return render_template("result.html", tag = session["tag"], books = books, page = page)
+        return render_template("result.html", books = books, page = page)
     
     @app.route("/rating")
     def rating():
-        if 'username' not in session:
+        if "username" not in session:
             return redirect("/")
         
         return render_template("rating.html")

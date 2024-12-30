@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="container">
-    <h2>Welcome, {{ session['username'] }}!</h2>
+    <h2>Welcome, {{ session.username }}!</h2>
     <p>We're glad to have you back!</p>
     <form method="GET" action="/logout">
         <button type="submit">Log Out</button>

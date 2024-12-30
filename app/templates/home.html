@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <h2>Welcome To Goodbooks Library System!</h2>
+    <br>
+    <p>Discover nice books with ease.</p>
+    <p>Search for books by title, author, tags, and more!</p>
+    <p>Found something you want to read later?</p>
+    <p>Try out our Wishlist System!</p>
+    <br>
+    {% if not session.user_id %}
+    <div class="button-group">
+        <p>
+            <a href="/login" class="btn">Login</a>
+            or
+            <a href="/register" class="btn">Register</a>
+        </p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

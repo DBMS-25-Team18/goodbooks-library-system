@@ -7,7 +7,7 @@
             <tr>
                 <th>Title</th>
                 <th>Authors</th>
-                {% if tag %}
+                {% if session.tag %}
                 <th>Tag</th>
                 {% else %}
                 <th>Rating</th>
@@ -20,7 +20,7 @@
             <tr>
                 <td>{{ book.title }}</td>
                 <td>{{ book.authors }}</td>
-                {% if tag %}
+                {% if session.tag %}
                 <td>{{ book.tag_name }}: {{ book.count }} times</td>
                 {% else %}
                 <td>{{ book.average_rating }}</td>
@@ -37,5 +37,14 @@
     {% else %}
     <p>No books are found. Try again!</p>
     {% endif %}
+    <br>
+    <div class="button-group">
+        {% if page > 1 %}
+        <a href="/result/{{ page - 1 }}" class="btn">Previous Page</a>
+        {% endif %}
+        {% if books|length == 10 %}
+        <a href="/result/{{ page + 1 }}" class="btn">Next Page</a>
+        {% endif %}
+    </div>
 </div>
 {% endblock %}
