@@ -5,6 +5,7 @@
     <table>
         <thead>
             <tr>
+                <th>Picture</th>
                 <th>Title</th>
                 <th>Authors</th>
                 {% if session.tag %}
@@ -18,6 +19,9 @@
         <tbody>
             {% for book in books %}
             <tr>
+                <td>
+                    <img src="{{ book.small_image_url }}" alt="image">
+                </td>
                 <td>{{ book.title }}</td>
                 <td>{{ book.authors }}</td>
                 {% if session.tag %}
