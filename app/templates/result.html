@@ -26,7 +26,7 @@
                 <td>{{ book.average_rating }}</td>
                 {% endif %}
                 <td>
-                    <form method="POST" action="/">
+                    <form method="POST" action="/addwish/{{ book.id }}">
                         <button type="submit" class="btn">Add to Wishlist</button>
                     </form>
                 </td>

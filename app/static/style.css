@@ -105,3 +105,11 @@ table th, table td {
 .delete-btn:hover {
     background-color: #e55a5a;
 }
+
+.danger {
+    color: red;
+}
+
+.success {
+    color: green;
+}
