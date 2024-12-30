@@ -1,7 +1,4 @@
 # Goodbooks Library System
 
-## Usage
-
-1.**Install dependencies**:
-
-  ```pip install -r requirements.txt```
+## 專案建置文件
+https://hackmd.io/SDdRHdzcRpO9azdx_S2Naw
