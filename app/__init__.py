@@ -203,7 +203,11 @@ def create_app():
         if "username" not in session:
             return redirect("/")
         
-        rating = request.form["rating"]
+        rating = int(request.form["rating"])
+
+        if rating < 1 or rating > 5:
+            flash("Invalid rating.", "danger")
+            return redirect(f"/rating/{id}")
         
         insert_query = "INSERT INTO ratings (user_id, books_id, rating) VALUES (%s, %s, %s)"
         update_query = "UPDATE ratings SET rating = %s WHERE user_id = %s AND books_id = %s"
